@@ -22,11 +22,11 @@ Setup:
 import discord
 from discord import app_commands
 from discord.ext import commands
+import os
 
 # ─────────────────────────────────────────────
 #  CONFIGURATION  ← edit these values
 # ─────────────────────────────────────────────
-import os
 BOT_TOKEN        = os.getenv "DISCORD_TOKEN"
 
 # ID of the channel the bot watches for keywords
