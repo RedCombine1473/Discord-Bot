@@ -20,13 +20,14 @@ Setup:
 """
 
 import discord
+import os
 from discord import app_commands
 from discord.ext import commands
 
 # ─────────────────────────────────────────────
 #  CONFIGURATION  ← edit these values
 # ─────────────────────────────────────────────
-BOT_TOKEN        = "your bot token"
+BOT_TOKEN        = os.getenv "DISCORD_TOKEN"
 
 # ID of the channel the bot watches for keywords
 # Can be a regular text channel (#) or an announcement channel (📢)
