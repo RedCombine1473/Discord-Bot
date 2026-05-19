@@ -27,22 +27,25 @@ import os
 # ─────────────────────────────────────────────
 #  CONFIGURATION  ← edit these values
 # ─────────────────────────────────────────────
-BOT_TOKEN        = os.getenv("DISCORD_TOKEN")
+BOT_TOKEN = os.getenv("DISCORD_TOKEN")
 
 # ID of the channel the bot watches for keywords
 # Can be a regular text channel (#) or an announcement channel (📢)
-SOURCE_CHANNEL_ID = 1506019449680171148
+SOURCE_CHANNEL_ID = 1413897942028386365
 
 # ID of the channel that gets unlocked when a keyword is detected
-TARGET_CHANNEL_ID = 1506020282060767262
+TARGET_CHANNEL_ID = 1505257157573214269
 
 # Keywords that trigger the unlock (case-insensitive)
-KEYWORDS = ["Moderator Applications"]
+KEYWORDS = ["Moderator Applications Are Open!"]
 
 # ID of the Appy applications channel (moderator/staff applications, etc.)
 # When a keyword unlock fires, @everyone will have send_messages DENIED here
 # so only the Appy bot can post — preventing members from spamming it.
-APPLICATIONS_CHANNEL_ID = 111122223333444455
+APPLICATIONS_CHANNEL_ID = 1505257157573214269
+
+# ID of the channel where the bot sends the unlock confirmation message
+ANNOUNCEMENT_CHANNEL_ID = 1413897696162611375
 # ─────────────────────────────────────────────
 
 
@@ -73,6 +76,7 @@ async def on_ready():
     print(f"👁  Watching channel      : {SOURCE_CHANNEL_ID}")
     print(f"🔓  Will unlock channel   : {TARGET_CHANNEL_ID}")
     print(f"📋  Applications channel  : {APPLICATIONS_CHANNEL_ID}")
+    print(f"📢  Announcement channel  : {ANNOUNCEMENT_CHANNEL_ID}")
     print(f"🔑  Keywords              : {KEYWORDS}")
 
 
@@ -130,7 +134,7 @@ async def unlock_channel(
     trigger_channel: discord.TextChannel,
 ) -> None:
     """
-    Two things happen atomically when a keyword is detected:
+    Three things happen when a keyword is detected:
 
       1. TARGET_CHANNEL_ID is unlocked — @everyone gets view_channel and
          send_messages set to True so members can read and chat there.
@@ -138,6 +142,9 @@ async def unlock_channel(
       2. APPLICATIONS_CHANNEL_ID is muted — @everyone has send_messages
          set to False so only the Appy bot can post in the applications
          channel, keeping it clean and spam-free.
+
+      3. A confirmation message is sent to ANNOUNCEMENT_CHANNEL_ID so the
+         unlock is announced in a specific channel rather than the source.
 
     How Discord permission overrides work
     ──────────────────────────────────────
@@ -196,12 +203,23 @@ async def unlock_channel(
             reason=f"Applications channel muted during keyword unlock in #{trigger_channel.name}",
         )
 
-    # ── Confirm in the source channel ────────────────────────────────────
+    # ── Step 3: Send confirmation to the announcement channel ────────────
+    # Instead of replying in the source channel, the bot posts the unlock
+    # confirmation in ANNOUNCEMENT_CHANNEL_ID so the right audience sees it.
+    announcement_channel = guild.get_channel(ANNOUNCEMENT_CHANNEL_ID)
     apps_mention = apps_channel.mention if apps_channel else f"`{APPLICATIONS_CHANNEL_ID}`"
-    await trigger_channel.send(
-        f"🔓 **{target.mention} has been unlocked!** Everyone can now read and send messages there.\n"
-        f"📋 **{apps_mention}** has been muted for `@everyone` — only Appy can post there now."
-    )
+
+    if announcement_channel is None:
+        # Fall back to the source channel if the announcement channel isn't found
+        await trigger_channel.send(
+            f"⚠️ Could not find announcement channel (ID `{ANNOUNCEMENT_CHANNEL_ID}`). "
+            "Check the config."
+        )
+    else:
+        await announcement_channel.send(
+            f"🔓 **{target.mention} has been unlocked!** Everyone can now read and send messages there.\n"
+            f"📋 **{apps_mention}** has been muted for `@everyone` — only Appy can post there now."
+        )
 
 
 # ── Slash Commands ────────────────────────────
@@ -213,6 +231,7 @@ async def status(interaction: discord.Interaction):
     embed.add_field(name="Source Channel",       value=f"<#{SOURCE_CHANNEL_ID}>",       inline=False)
     embed.add_field(name="Target Channel",       value=f"<#{TARGET_CHANNEL_ID}>",       inline=False)
     embed.add_field(name="Applications Channel", value=f"<#{APPLICATIONS_CHANNEL_ID}>", inline=False)
+    embed.add_field(name="Announcement Channel", value=f"<#{ANNOUNCEMENT_CHANNEL_ID}>", inline=False)
     embed.add_field(name="Keywords",             value=", ".join(f"`{k}`" for k in KEYWORDS), inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
