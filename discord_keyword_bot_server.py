@@ -27,7 +27,7 @@ import os
 # ─────────────────────────────────────────────
 #  CONFIGURATION  ← edit these values
 # ─────────────────────────────────────────────
-BOT_TOKEN        = os.getenv "DISCORD_TOKEN"
+BOT_TOKEN        = os.getenv("DISCORD_TOKEN")
 
 # ID of the channel the bot watches for keywords
 # Can be a regular text channel (#) or an announcement channel (📢)
