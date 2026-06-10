@@ -31,10 +31,10 @@ BOT_TOKEN = os.getenv("DISCORD_TOKEN")
 
 # ID of the channel the bot watches for keywords
 # Can be a regular text channel (#) or an announcement channel (📢)
-SOURCE_CHANNEL_ID = 1506019449680171148
+SOURCE_CHANNEL_ID = os.getenv("SOURCE_CHANNEL")
 
 # ID of the channel that gets unlocked when a keyword is detected
-TARGET_CHANNEL_ID = 1506020282060767262
+TARGET_CHANNEL_ID = os.getenv("TARGET_CHANNEL")
 
 # Keywords that trigger the unlock (case-insensitive)
 KEYWORDS = ["Moderator Applications Are Open!"]
@@ -42,10 +42,10 @@ KEYWORDS = ["Moderator Applications Are Open!"]
 # ID of the Appy applications channel (moderator/staff applications, etc.)
 # When a keyword unlock fires, @everyone will have send_messages DENIED here
 # so only the Appy bot can post — preventing members from spamming it.
-APPLICATIONS_CHANNEL_ID = 111122223333444455
+APPLICATIONS_CHANNEL_ID = os.getenv("APPLICATIONS_CHANNEL")
 
 # ID of the channel where the bot sends the unlock confirmation message
-ANNOUNCEMENT_CHANNEL_ID = 1413897696162611375
+ANNOUNCEMENT_CHANNEL_ID = os.getenv("ANNOUCNEMENT_CHANNEL")
 # ─────────────────────────────────────────────
 
 
