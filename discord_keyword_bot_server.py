@@ -45,7 +45,7 @@ KEYWORDS = ["Moderator Applications Are Open!"]
 APPLICATIONS_CHANNEL_ID = os.getenv("APPLICATIONS_CHANNEL")
 
 # ID of the channel where the bot sends the unlock confirmation message
-ANNOUNCEMENT_CHANNEL_ID = os.getenv("ANNOUCNEMENT_CHANNEL")
+ANNOUNCEMENT_CHANNEL_ID = os.getenv("ANNOUNCEMENT_CHANNEL")
 # ─────────────────────────────────────────────
 
 
